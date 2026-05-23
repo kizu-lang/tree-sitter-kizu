@@ -1,0 +1,27 @@
+{
+  "grammars": [
+    {
+      "name": "kizu",
+      "camelcase": "Kizu",
+      "scope": "source.kizu",
+      "path": ".",
+      "file-types": ["kizu"],
+      "injection-regex": "^kizu$"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Kizu grammar for tree-sitter",
+    "authors": [],
+    "links": {}
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true
+  }
+}

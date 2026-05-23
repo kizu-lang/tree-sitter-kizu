@@ -1,0 +1,413 @@
+==============================
+let statement
+==============================
+
+fn main() {
+    let x = 42;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (let_statement name: (identifier) value: (integer_literal)))))
+
+==============================
+var statement
+==============================
+
+fn main() {
+    var count = 0;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (var_statement name: (identifier) value: (integer_literal)))))
+
+==============================
+let with type annotation
+==============================
+
+fn main() {
+    let name: []u8 = "alice";
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (let_statement
+        name: (identifier)
+        type: (slice_type (named_type (identifier)))
+        value: (string_literal)))))
+
+==============================
+assignment statement
+==============================
+
+fn main() {
+    var x = 0;
+    x = x + 1;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (var_statement name: (identifier) value: (integer_literal))
+      (assignment_statement
+        target: (identifier)
+        value: (binary_expression left: (identifier) right: (integer_literal))))))
+
+==============================
+return statement
+==============================
+
+fn foo() -> i64 {
+    return 42;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (return_type type: (named_type (identifier)))
+    body: (block
+      (return_statement value: (integer_literal)))))
+
+==============================
+return void
+==============================
+
+fn bar() {
+    return;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (return_statement))))
+
+==============================
+defer statement
+==============================
+
+fn main() {
+    defer obj.deinit();
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (defer_statement
+        value: (call_expression
+          function: (field_expression value: (identifier) field: (identifier))
+          arguments: (argument_list))))))
+
+==============================
+if statement
+==============================
+
+fn main() {
+    if x > 0 {
+        print(x);
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (if_expression
+        condition: (binary_expression left: (identifier) right: (integer_literal))
+        consequence: (block
+          (expression_statement
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list (identifier)))))))))
+
+==============================
+if else
+==============================
+
+fn main() {
+    if x > 0 {
+        print("pos");
+    } else {
+        print("neg");
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (if_expression
+        condition: (binary_expression left: (identifier) right: (integer_literal))
+        consequence: (block
+          (expression_statement
+            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))
+        alternative: (block
+          (expression_statement
+            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))))))
+
+==============================
+while loop
+==============================
+
+fn main() {
+    var i = 0;
+    while i < 10 {
+        i = i + 1;
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (var_statement name: (identifier) value: (integer_literal))
+      (while_statement
+        condition: (binary_expression left: (identifier) right: (integer_literal))
+        body: (block
+          (assignment_statement
+            target: (identifier)
+            value: (binary_expression left: (identifier) right: (integer_literal))))))))
+
+==============================
+for loop
+==============================
+
+fn main() {
+    for 0..5 |i| {
+        print(i);
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (for_statement
+        range: (range_expression start: (integer_literal) end: (integer_literal))
+        binding: (closure_parameters (identifier))
+        body: (block
+          (expression_statement
+            (call_expression function: (identifier) arguments: (argument_list (identifier)))))))))
+
+==============================
+break and continue
+==============================
+
+fn main() {
+    while true {
+        break;
+    }
+    while true {
+        continue;
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (while_statement
+        condition: (boolean_literal)
+        body: (block (break_statement)))
+      (while_statement
+        condition: (boolean_literal)
+        body: (block (continue_statement))))))
+
+==============================
+labeled break
+==============================
+
+fn main() {
+    outer: while true {
+        break :outer;
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (while_statement
+        label: (label (identifier))
+        condition: (boolean_literal)
+        body: (block
+          (break_statement label: (identifier)))))))
+
+==============================
+match statement
+==============================
+
+fn main() {
+    match color {
+        Red => print("red"),
+        Green => print("green"),
+        Blue => print("blue"),
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (match_expression
+        value: (identifier)
+        (match_arm
+          pattern: (identifier)
+          value: (call_expression function: (identifier) arguments: (argument_list (string_literal))))
+        (match_arm
+          pattern: (identifier)
+          value: (call_expression function: (identifier) arguments: (argument_list (string_literal))))
+        (match_arm
+          pattern: (identifier)
+          value: (call_expression function: (identifier) arguments: (argument_list (string_literal))))))))
+
+==============================
+match with constructor pattern
+==============================
+
+fn main() {
+    match shape {
+        Point => print("point"),
+        Circle(r) => print(r),
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (match_expression
+        value: (identifier)
+        (match_arm
+          pattern: (identifier)
+          value: (call_expression function: (identifier) arguments: (argument_list (string_literal))))
+        (match_arm
+          pattern: (constructor_pattern name: (identifier) binding: (identifier))
+          value: (call_expression function: (identifier) arguments: (argument_list (identifier))))))))
+
+==============================
+match with wildcard
+==============================
+
+fn main() {
+    match x {
+        A => 1,
+        _ => 0,
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (match_expression
+        value: (identifier)
+        (match_arm pattern: (identifier) value: (integer_literal))
+        (match_arm pattern: (wildcard_pattern) value: (integer_literal))))))
+
+==============================
+unsafe block
+==============================
+
+fn main() {
+    unsafe {
+        print("danger");
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (unsafe_block
+        (block
+          (expression_statement
+            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))))))
+
+==============================
+comptime if
+==============================
+
+fn main() {
+    comptime if true {
+        print("yes");
+    } else {
+        print("no");
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (comptime_if
+        condition: (boolean_literal)
+        consequence: (block
+          (expression_statement
+            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))
+        alternative: (block
+          (expression_statement
+            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))))))

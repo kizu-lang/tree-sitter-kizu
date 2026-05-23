@@ -1,0 +1,276 @@
+==============================
+import declaration
+==============================
+
+import app::lexer;
+import app::parser::ast;
+
+---
+
+(source_file
+  (import_declaration
+    path: (import_path (identifier) (identifier)))
+  (import_declaration
+    path: (import_path (identifier) (identifier) (identifier))))
+
+==============================
+simple function
+==============================
+
+fn main() {
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block)))
+
+==============================
+function with parameters and return type
+==============================
+
+fn add(a: i64, b: i64) -> i64 {
+    return a + b;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter name: (identifier) type: (named_type (identifier)))
+      (parameter name: (identifier) type: (named_type (identifier))))
+    return_type: (return_type type: (named_type (identifier)))
+    body: (block
+      (return_statement
+        value: (binary_expression
+          left: (identifier)
+          right: (identifier))))))
+
+==============================
+public function
+==============================
+
+pub fn greet() {
+}
+
+---
+
+(source_file
+  (function_declaration
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block)))
+
+==============================
+unsafe function
+==============================
+
+unsafe fn dangerous() {
+}
+
+---
+
+(source_file
+  (function_declaration
+    (function_modifier)
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block)))
+
+==============================
+generic function
+==============================
+
+fn identity<T>(value: T) -> T {
+    return value;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    type_parameters: (type_parameters (identifier))
+    parameters: (parameter_list
+      (parameter name: (identifier) type: (named_type (identifier))))
+    return_type: (return_type type: (named_type (identifier)))
+    body: (block
+      (return_statement value: (identifier)))))
+
+==============================
+function with borrows clause
+==============================
+
+fn first(bytes: []u8) -> []u8 borrows bytes {
+    return bytes;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter name: (identifier) type: (slice_type (named_type (identifier)))))
+    return_type: (return_type type: (slice_type (named_type (identifier))))
+    borrows: (borrows_clause (identifier))
+    body: (block
+      (return_statement value: (identifier)))))
+
+==============================
+extern function declaration
+==============================
+
+extern "c" fn puts(s: ptr<const u8>) -> i32
+
+---
+
+(source_file
+  (extern_function_declaration
+    (extern_modifier abi: (string_literal))
+    name: (identifier)
+    parameters: (parameter_list
+      (parameter name: (identifier) type: (pointer_type (named_type (identifier)))))
+    return_type: (return_type type: (named_type (identifier)))))
+
+==============================
+struct declaration
+==============================
+
+struct User {
+    name: []u8,
+    age: i64,
+}
+
+---
+
+(source_file
+  (struct_declaration
+    name: (identifier)
+    (struct_field name: (identifier) type: (slice_type (named_type (identifier))))
+    (struct_field name: (identifier) type: (named_type (identifier)))))
+
+==============================
+pub struct with pub fields
+==============================
+
+pub struct Config {
+    pub port: i64,
+    host: []u8,
+}
+
+---
+
+(source_file
+  (struct_declaration
+    name: (identifier)
+    (struct_field name: (identifier) type: (named_type (identifier)))
+    (struct_field name: (identifier) type: (slice_type (named_type (identifier))))))
+
+==============================
+enum declaration
+==============================
+
+enum Color {
+    Red,
+    Green,
+    Blue,
+}
+
+---
+
+(source_file
+  (enum_declaration
+    name: (identifier)
+    (enum_variant name: (identifier))
+    (enum_variant name: (identifier))
+    (enum_variant name: (identifier))))
+
+==============================
+union declaration
+==============================
+
+union Shape {
+    Point,
+    Circle(i64),
+    Label([]u8),
+}
+
+---
+
+(source_file
+  (union_declaration
+    name: (identifier)
+    (union_variant name: (identifier))
+    (union_variant name: (identifier) payload: (named_type (identifier)))
+    (union_variant name: (identifier) payload: (slice_type (named_type (identifier))))))
+
+==============================
+contract declaration
+==============================
+
+contract Writer {
+    fn write(self: &Self, bytes: &[]u8) -> !i64;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    name: (identifier)
+    (contract_method
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter name: (identifier) type: (borrow_type (named_type (identifier))))
+        (parameter name: (identifier) type: (borrow_type (slice_type (named_type (identifier))))))
+      return_type: (return_type type: (error_union_type (named_type (identifier)))))))
+
+==============================
+impl declaration
+==============================
+
+impl Trace {
+    fn deinit(self: Trace) {
+    }
+}
+
+---
+
+(source_file
+  (impl_declaration
+    target: (identifier)
+    (function_declaration
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter name: (identifier) type: (named_type (identifier))))
+      body: (block))))
+
+==============================
+impl contract for type
+==============================
+
+impl Writer for File {
+    fn write(self: &Self) -> !i64 {
+        return 1;
+    }
+}
+
+---
+
+(source_file
+  (impl_declaration
+    contract: (identifier)
+    target: (identifier)
+    (function_declaration
+      name: (identifier)
+      parameters: (parameter_list
+        (parameter name: (identifier) type: (borrow_type (named_type (identifier)))))
+      return_type: (return_type type: (error_union_type (named_type (identifier))))
+      body: (block
+        (return_statement value: (integer_literal))))))

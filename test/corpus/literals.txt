@@ -1,0 +1,56 @@
+==============================
+integer literals
+==============================
+
+42;
+0;
+
+---
+
+(source_file
+  (expression_statement (integer_literal))
+  (expression_statement (integer_literal)))
+
+==============================
+string literals
+==============================
+
+"hello";
+"with \"escape\"";
+
+---
+
+(source_file
+  (expression_statement (string_literal))
+  (expression_statement (string_literal)))
+
+==============================
+boolean literals
+==============================
+
+true;
+false;
+
+---
+
+(source_file
+  (expression_statement (boolean_literal))
+  (expression_statement (boolean_literal)))
+
+==============================
+multiline string literal
+==============================
+
+\\Usage: kizu <command>
+\\Commands:
+\\  run
+;
+
+---
+
+(source_file
+  (expression_statement
+    (multiline_string_literal
+      (multiline_string_line)
+      (multiline_string_line)
+      (multiline_string_line))))

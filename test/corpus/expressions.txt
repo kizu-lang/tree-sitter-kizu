@@ -1,0 +1,408 @@
+==============================
+binary arithmetic
+==============================
+
+1 + 2;
+3 * 4;
+10 - 5;
+8 / 2;
+7 % 3;
+
+---
+
+(source_file
+  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal)))
+  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal)))
+  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal)))
+  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal)))
+  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal))))
+
+==============================
+precedence
+==============================
+
+1 + 2 * 3;
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (integer_literal)
+      right: (binary_expression left: (integer_literal) right: (integer_literal)))))
+
+==============================
+comparison
+==============================
+
+a == b;
+x != y;
+a < b;
+a >= b;
+
+---
+
+(source_file
+  (expression_statement (binary_expression left: (identifier) right: (identifier)))
+  (expression_statement (binary_expression left: (identifier) right: (identifier)))
+  (expression_statement (binary_expression left: (identifier) right: (identifier)))
+  (expression_statement (binary_expression left: (identifier) right: (identifier))))
+
+==============================
+logical operators
+==============================
+
+a and b;
+x or y;
+
+---
+
+(source_file
+  (expression_statement (binary_expression left: (identifier) right: (identifier)))
+  (expression_statement (binary_expression left: (identifier) right: (identifier))))
+
+==============================
+prefix expression
+==============================
+
+-x;
+
+---
+
+(source_file
+  (expression_statement (prefix_expression operand: (identifier))))
+
+==============================
+function call
+==============================
+
+print("hello");
+add(1, 2);
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list (string_literal))))
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (argument_list (integer_literal) (integer_literal)))))
+
+==============================
+method call
+==============================
+
+obj.method(x);
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (field_expression value: (identifier) field: (identifier))
+      arguments: (argument_list (identifier)))))
+
+==============================
+field access
+==============================
+
+user.name;
+
+---
+
+(source_file
+  (expression_statement
+    (field_expression value: (identifier) field: (identifier))))
+
+==============================
+namespace access
+==============================
+
+Color::Red;
+
+---
+
+(source_file
+  (expression_statement
+    (namespace_expression namespace: (identifier) name: (identifier))))
+
+==============================
+chained namespace and call
+==============================
+
+std::testing::expect_equal(1, 2);
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (namespace_expression
+        namespace: (namespace_expression namespace: (identifier) name: (identifier))
+        name: (identifier))
+      arguments: (argument_list (integer_literal) (integer_literal)))))
+
+==============================
+borrow expression
+==============================
+
+&x;
+
+---
+
+(source_file
+  (expression_statement (borrow_expression value: (identifier))))
+
+==============================
+mutable borrow expression
+==============================
+
+&var x;
+
+---
+
+(source_file
+  (expression_statement (mutable_borrow_expression value: (identifier))))
+
+==============================
+try expression
+==============================
+
+fn main() -> !i64 {
+    let val = try parse();
+    return val;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (return_type type: (error_union_type (named_type (identifier))))
+    body: (block
+      (let_statement
+        name: (identifier)
+        value: (try_expression
+          value: (call_expression function: (identifier) arguments: (argument_list))))
+      (return_statement value: (identifier)))))
+
+==============================
+index expression
+==============================
+
+arr[0];
+
+---
+
+(source_file
+  (expression_statement
+    (index_expression value: (identifier) index: (integer_literal))))
+
+==============================
+slice expression
+==============================
+
+bytes[0..5];
+
+---
+
+(source_file
+  (expression_statement
+    (index_expression
+      value: (identifier)
+      index: (slice_range start: (integer_literal) end: (integer_literal)))))
+
+==============================
+struct literal
+==============================
+
+fn main() {
+    let u = User {
+        name: "alice",
+        age: 30,
+    };
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (let_statement
+        name: (identifier)
+        value: (struct_literal
+          type: (identifier)
+          (field_initializer name: (identifier) value: (string_literal))
+          (field_initializer name: (identifier) value: (integer_literal)))))))
+
+==============================
+cast expression
+==============================
+
+cast<i64>(x);
+
+---
+
+(source_file
+  (expression_statement
+    (cast_expression
+      type: (named_type (identifier))
+      value: (identifier))))
+
+==============================
+error expression
+==============================
+
+fn fail() -> !i64 {
+    return error("bad");
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    return_type: (return_type type: (error_union_type (named_type (identifier))))
+    body: (block
+      (return_statement
+        value: (error_expression message: (string_literal))))))
+
+==============================
+if expression
+==============================
+
+fn main() {
+    let x = if true { 1 } else { 0 }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (let_statement
+        name: (identifier)
+        value: (if_expression
+          condition: (boolean_literal)
+          consequence: (block (expression_statement (integer_literal)))
+          alternative: (block (expression_statement (integer_literal))))))))
+
+==============================
+match expression as value
+==============================
+
+fn main() {
+    let x = match c {
+        A => 1,
+        B => 2,
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (let_statement
+        name: (identifier)
+        value: (match_expression
+          value: (identifier)
+          (match_arm pattern: (identifier) value: (integer_literal))
+          (match_arm pattern: (identifier) value: (integer_literal)))))))
+
+==============================
+range expression
+==============================
+
+0..10;
+
+---
+
+(source_file
+  (expression_statement
+    (range_expression start: (integer_literal) end: (integer_literal))))
+
+==============================
+parenthesized expression
+==============================
+
+(1 + 2) * 3;
+
+---
+
+(source_file
+  (expression_statement
+    (binary_expression
+      left: (parenthesized_expression
+        (binary_expression left: (integer_literal) right: (integer_literal)))
+      right: (integer_literal))))
+
+==============================
+comptime expression
+==============================
+
+fn main() {
+    let size = comptime 4 * 1024;
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (let_statement
+        name: (identifier)
+        value: (comptime_expression
+          value: (binary_expression left: (integer_literal) right: (integer_literal)))))))
+
+==============================
+deref expression
+==============================
+
+fn main() {
+    unsafe {
+        node.*;
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    name: (identifier)
+    parameters: (parameter_list)
+    body: (block
+      (unsafe_block
+        (block
+          (expression_statement
+            (deref_expression value: (identifier))))))))
+
+==============================
+union variant construction
+==============================
+
+Shape::Circle(10);
+Shape::Point;
+
+---
+
+(source_file
+  (expression_statement
+    (call_expression
+      function: (namespace_expression namespace: (identifier) name: (identifier))
+      arguments: (argument_list (integer_literal))))
+  (expression_statement
+    (namespace_expression namespace: (identifier) name: (identifier))))
