@@ -16,7 +16,7 @@ string literals
 ==============================
 
 "hello";
-"with \"escape\"";
+"with \\backslash";
 
 ---
 

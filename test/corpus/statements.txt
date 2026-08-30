@@ -13,7 +13,9 @@ fn main() {
     name: (identifier)
     parameters: (parameter_list)
     body: (block
-      (let_statement name: (identifier) value: (integer_literal)))))
+      (let_statement
+        name: (identifier)
+        value: (integer_literal)))))
 
 ==============================
 var statement
@@ -30,14 +32,16 @@ fn main() {
     name: (identifier)
     parameters: (parameter_list)
     body: (block
-      (var_statement name: (identifier) value: (integer_literal)))))
+      (var_statement
+        name: (identifier)
+        value: (integer_literal)))))
 
 ==============================
-let with type annotation
+let with owner marker
 ==============================
 
 fn main() {
-    let name: []u8 = "alice";
+    let name = move owned;
 }
 
 ---
@@ -49,8 +53,8 @@ fn main() {
     body: (block
       (let_statement
         name: (identifier)
-        type: (slice_type (named_type (identifier)))
-        value: (string_literal)))))
+        value: (marker_expression
+          value: (identifier))))))
 
 ==============================
 assignment statement
@@ -68,10 +72,14 @@ fn main() {
     name: (identifier)
     parameters: (parameter_list)
     body: (block
-      (var_statement name: (identifier) value: (integer_literal))
+      (var_statement
+        name: (identifier)
+        value: (integer_literal))
       (assignment_statement
         target: (identifier)
-        value: (binary_expression left: (identifier) right: (integer_literal))))))
+        value: (binary_expression
+          left: (identifier)
+          right: (integer_literal))))))
 
 ==============================
 return statement
@@ -87,9 +95,12 @@ fn foo() -> i64 {
   (function_declaration
     name: (identifier)
     parameters: (parameter_list)
-    return_type: (return_type type: (named_type (identifier)))
+    return_type: (return_type
+      type: (named_type
+        (identifier)))
     body: (block
-      (return_statement value: (integer_literal)))))
+      (return_statement
+        value: (integer_literal)))))
 
 ==============================
 return void
@@ -125,7 +136,9 @@ fn main() {
     body: (block
       (defer_statement
         value: (call_expression
-          function: (field_expression value: (identifier) field: (identifier))
+          function: (field_expression
+            value: (identifier)
+            field: (identifier))
           arguments: (argument_list))))))
 
 ==============================
@@ -146,12 +159,15 @@ fn main() {
     parameters: (parameter_list)
     body: (block
       (if_expression
-        condition: (binary_expression left: (identifier) right: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
         consequence: (block
           (expression_statement
             (call_expression
               function: (identifier)
-              arguments: (argument_list (identifier)))))))))
+              arguments: (argument_list
+                (identifier)))))))))
 
 ==============================
 if else
@@ -173,13 +189,21 @@ fn main() {
     parameters: (parameter_list)
     body: (block
       (if_expression
-        condition: (binary_expression left: (identifier) right: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
         consequence: (block
           (expression_statement
-            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))
         alternative: (block
           (expression_statement
-            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))
 
 ==============================
 while loop
@@ -199,13 +223,19 @@ fn main() {
     name: (identifier)
     parameters: (parameter_list)
     body: (block
-      (var_statement name: (identifier) value: (integer_literal))
+      (var_statement
+        name: (identifier)
+        value: (integer_literal))
       (while_statement
-        condition: (binary_expression left: (identifier) right: (integer_literal))
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
         body: (block
           (assignment_statement
             target: (identifier)
-            value: (binary_expression left: (identifier) right: (integer_literal))))))))
+            value: (binary_expression
+              left: (identifier)
+              right: (integer_literal))))))))
 
 ==============================
 for loop
@@ -225,11 +255,16 @@ fn main() {
     parameters: (parameter_list)
     body: (block
       (for_statement
-        range: (range_expression start: (integer_literal) end: (integer_literal))
-        binding: (closure_parameters (identifier))
+        start: (integer_literal)
+        end: (integer_literal)
+        binding: (payload_capture
+          name: (identifier))
         body: (block
           (expression_statement
-            (call_expression function: (identifier) arguments: (argument_list (identifier)))))))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (identifier)))))))))
 
 ==============================
 break and continue
@@ -253,10 +288,12 @@ fn main() {
     body: (block
       (while_statement
         condition: (boolean_literal)
-        body: (block (break_statement)))
+        body: (block
+          (break_statement)))
       (while_statement
         condition: (boolean_literal)
-        body: (block (continue_statement))))))
+        body: (block
+          (continue_statement))))))
 
 ==============================
 labeled break
@@ -276,10 +313,12 @@ fn main() {
     parameters: (parameter_list)
     body: (block
       (while_statement
-        label: (label (identifier))
+        label: (label
+          (identifier))
         condition: (boolean_literal)
         body: (block
-          (break_statement label: (identifier)))))))
+          (break_statement
+            label: (identifier)))))))
 
 ==============================
 match statement
@@ -304,13 +343,22 @@ fn main() {
         value: (identifier)
         (match_arm
           pattern: (identifier)
-          value: (call_expression function: (identifier) arguments: (argument_list (string_literal))))
+          value: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))
         (match_arm
           pattern: (identifier)
-          value: (call_expression function: (identifier) arguments: (argument_list (string_literal))))
+          value: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))
         (match_arm
           pattern: (identifier)
-          value: (call_expression function: (identifier) arguments: (argument_list (string_literal))))))))
+          value: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))))))
 
 ==============================
 match with constructor pattern
@@ -334,10 +382,18 @@ fn main() {
         value: (identifier)
         (match_arm
           pattern: (identifier)
-          value: (call_expression function: (identifier) arguments: (argument_list (string_literal))))
+          value: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (string_literal))))
         (match_arm
-          pattern: (constructor_pattern name: (identifier) binding: (identifier))
-          value: (call_expression function: (identifier) arguments: (argument_list (identifier))))))))
+          pattern: (constructor_pattern
+            name: (identifier)
+            binding: (identifier))
+          value: (call_expression
+            function: (identifier)
+            arguments: (argument_list
+              (identifier))))))))
 
 ==============================
 match with wildcard
@@ -359,17 +415,19 @@ fn main() {
     body: (block
       (match_expression
         value: (identifier)
-        (match_arm pattern: (identifier) value: (integer_literal))
-        (match_arm pattern: (wildcard_pattern) value: (integer_literal))))))
+        (match_arm
+          pattern: (identifier)
+          value: (integer_literal))
+        (match_arm
+          pattern: (wildcard_pattern)
+          value: (integer_literal))))))
 
 ==============================
-unsafe block
+unsafe expression marker
 ==============================
 
 fn main() {
-    unsafe {
-        print("danger");
-    }
+    unsafe pointer.*;
 }
 
 ---
@@ -379,10 +437,165 @@ fn main() {
     name: (identifier)
     parameters: (parameter_list)
     body: (block
-      (unsafe_block
+      (expression_statement
+        (marker_expression
+          value: (deref_expression
+            value: (identifier)))))))
+
+==============================
+errdefer statement
+==============================
+
+fn load() -> !void {
+    errdefer value.deinit(allocator);
+    return;
+}
+
+---
+
+(source_file
+  (function_declaration
+    (identifier)
+    (parameter_list)
+    (return_type
+      (error_union_type
+        (named_type
+          (identifier))))
+    (block
+      (errdefer_statement
+        (call_expression
+          (field_expression
+            (identifier)
+            (identifier))
+          (argument_list
+            (identifier))))
+      (return_statement))))
+
+==============================
+payload captures
+==============================
+
+fn main() {
+    if open() |value| {
+        use(value);
+    } else |failed| {
+        report(failed);
+    }
+    while next() |item| {
+        use(item);
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    (identifier)
+    (parameter_list)
+    (block
+      (if_expression
+        (call_expression
+          (identifier)
+          (argument_list))
+        (payload_capture
+          (identifier))
         (block
           (expression_statement
-            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))))))
+            (call_expression
+              (identifier)
+              (argument_list
+                (identifier)))))
+        (payload_capture
+          (identifier))
+        (block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (argument_list
+                (identifier))))))
+      (while_statement
+        (call_expression
+          (identifier)
+          (argument_list))
+        (payload_capture
+          (identifier))
+        (block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (argument_list
+                (identifier)))))))))
+
+==============================
+comptime loops and dispatch
+==============================
+
+fn inspect<T>() {
+    comptime for std::meta::public_fields<T>() |field| {
+        visit<field>();
+    }
+    comptime match std::meta::variants<T>() |variant, payload| {
+        visit<variant>();
+    }
+}
+
+---
+
+(source_file
+  (function_declaration
+    (identifier)
+    (static_parameters
+      (static_parameter
+        (identifier)))
+    (parameter_list)
+    (block
+      (comptime_for
+        (call_expression
+          (type_application
+            (namespace_expression
+              (namespace_expression
+                (identifier)
+                (identifier))
+              (identifier))
+            (static_arguments
+              (named_type
+                (identifier))))
+          (argument_list))
+        (payload_capture
+          (identifier))
+        (block
+          (expression_statement
+            (call_expression
+              (type_application
+                (identifier)
+                (static_arguments
+                  (named_type
+                    (identifier))))
+              (argument_list)))))
+      (comptime_match
+        (call_expression
+          (type_application
+            (namespace_expression
+              (namespace_expression
+                (identifier)
+                (identifier))
+              (identifier))
+            (static_arguments
+              (named_type
+                (identifier))))
+          (argument_list))
+        (variant_capture
+          (identifier)
+          (identifier))
+        (block
+          (expression_statement
+            (call_expression
+              (type_application
+                (identifier)
+                (static_arguments
+                  (named_type
+                    (identifier))))
+              (argument_list))))))))
 
 ==============================
 comptime if
@@ -407,7 +620,13 @@ fn main() {
         condition: (boolean_literal)
         consequence: (block
           (expression_statement
-            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))
         alternative: (block
           (expression_statement
-            (call_expression function: (identifier) arguments: (argument_list (string_literal)))))))))
+            (call_expression
+              function: (identifier)
+              arguments: (argument_list
+                (string_literal)))))))))

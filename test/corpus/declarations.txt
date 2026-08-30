@@ -9,9 +9,14 @@ import app::parser::ast;
 
 (source_file
   (import_declaration
-    path: (import_path (identifier) (identifier)))
+    path: (import_path
+      (identifier)
+      (identifier)))
   (import_declaration
-    path: (import_path (identifier) (identifier) (identifier))))
+    path: (import_path
+      (identifier)
+      (identifier)
+      (identifier))))
 
 ==============================
 simple function
@@ -42,9 +47,17 @@ fn add(a: i64, b: i64) -> i64 {
   (function_declaration
     name: (identifier)
     parameters: (parameter_list
-      (parameter name: (identifier) type: (named_type (identifier)))
-      (parameter name: (identifier) type: (named_type (identifier))))
-    return_type: (return_type type: (named_type (identifier)))
+      (parameter
+        name: (identifier)
+        type: (named_type
+          (identifier)))
+      (parameter
+        name: (identifier)
+        type: (named_type
+          (identifier))))
+    return_type: (return_type
+      type: (named_type
+        (identifier)))
     body: (block
       (return_statement
         value: (binary_expression
@@ -62,7 +75,6 @@ pub fn greet() {
 
 (source_file
   (function_declaration
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list)
     body: (block)))
@@ -78,7 +90,6 @@ unsafe fn dangerous() {
 
 (source_file
   (function_declaration
-    (function_modifier)
     name: (identifier)
     parameters: (parameter_list)
     body: (block)))
@@ -96,32 +107,58 @@ fn identity<T>(value: T) -> T {
 (source_file
   (function_declaration
     name: (identifier)
-    type_parameters: (type_parameters (identifier))
+    static_parameters: (static_parameters
+      (static_parameter
+        name: (identifier)))
     parameters: (parameter_list
-      (parameter name: (identifier) type: (named_type (identifier))))
-    return_type: (return_type type: (named_type (identifier)))
+      (parameter
+        name: (identifier)
+        type: (named_type
+          (identifier))))
+    return_type: (return_type
+      type: (named_type
+        (identifier)))
     body: (block
-      (return_statement value: (identifier)))))
+      (return_statement
+        value: (identifier)))))
 
 ==============================
-function with borrows clause
+method with receiver
 ==============================
 
-fn first(bytes: []u8) -> []u8 borrows bytes {
-    return bytes;
+fn (self: &var Writer) write(bytes: []u8) -> !void {
+    return self.write(bytes);
 }
 
 ---
 
 (source_file
   (function_declaration
+    receiver: (receiver_clause
+      parameter: (parameter
+        name: (identifier)
+        type: (borrow_type
+          (named_type
+            (identifier)))))
     name: (identifier)
     parameters: (parameter_list
-      (parameter name: (identifier) type: (slice_type (named_type (identifier)))))
-    return_type: (return_type type: (slice_type (named_type (identifier))))
-    borrows: (borrows_clause (identifier))
+      (parameter
+        name: (identifier)
+        type: (slice_type
+          (named_type
+            (identifier)))))
+    return_type: (return_type
+      type: (error_union_type
+        (named_type
+          (identifier))))
     body: (block
-      (return_statement value: (identifier)))))
+      (return_statement
+        value: (call_expression
+          function: (field_expression
+            value: (identifier)
+            field: (identifier))
+          arguments: (argument_list
+            (identifier)))))))
 
 ==============================
 extern function declaration
@@ -133,11 +170,18 @@ extern "c" fn puts(s: ptr<const u8>) -> i32
 
 (source_file
   (extern_function_declaration
-    (extern_modifier abi: (string_literal))
+    (extern_modifier
+      abi: (string_literal))
     name: (identifier)
     parameters: (parameter_list
-      (parameter name: (identifier) type: (pointer_type (named_type (identifier)))))
-    return_type: (return_type type: (named_type (identifier)))))
+      (parameter
+        name: (identifier)
+        type: (pointer_type
+          (named_type
+            (identifier)))))
+    return_type: (return_type
+      type: (named_type
+        (identifier)))))
 
 ==============================
 struct declaration
@@ -153,8 +197,15 @@ struct User {
 (source_file
   (struct_declaration
     name: (identifier)
-    (struct_field name: (identifier) type: (slice_type (named_type (identifier))))
-    (struct_field name: (identifier) type: (named_type (identifier)))))
+    (struct_field
+      name: (identifier)
+      type: (slice_type
+        (named_type
+          (identifier))))
+    (struct_field
+      name: (identifier)
+      type: (named_type
+        (identifier)))))
 
 ==============================
 pub struct with pub fields
@@ -170,8 +221,15 @@ pub struct Config {
 (source_file
   (struct_declaration
     name: (identifier)
-    (struct_field name: (identifier) type: (named_type (identifier)))
-    (struct_field name: (identifier) type: (slice_type (named_type (identifier))))))
+    (struct_field
+      name: (identifier)
+      type: (named_type
+        (identifier)))
+    (struct_field
+      name: (identifier)
+      type: (slice_type
+        (named_type
+          (identifier))))))
 
 ==============================
 enum declaration
@@ -188,9 +246,12 @@ enum Color {
 (source_file
   (enum_declaration
     name: (identifier)
-    (enum_variant name: (identifier))
-    (enum_variant name: (identifier))
-    (enum_variant name: (identifier))))
+    (enum_variant
+      name: (identifier))
+    (enum_variant
+      name: (identifier))
+    (enum_variant
+      name: (identifier))))
 
 ==============================
 union declaration
@@ -207,9 +268,17 @@ union Shape {
 (source_file
   (union_declaration
     name: (identifier)
-    (union_variant name: (identifier))
-    (union_variant name: (identifier) payload: (named_type (identifier)))
-    (union_variant name: (identifier) payload: (slice_type (named_type (identifier))))))
+    (union_variant
+      name: (identifier))
+    (union_variant
+      name: (identifier)
+      payload: (named_type
+        (identifier)))
+    (union_variant
+      name: (identifier)
+      payload: (slice_type
+        (named_type
+          (identifier))))))
 
 ==============================
 contract declaration
@@ -227,50 +296,152 @@ contract Writer {
     (contract_method
       name: (identifier)
       parameters: (parameter_list
-        (parameter name: (identifier) type: (borrow_type (named_type (identifier))))
-        (parameter name: (identifier) type: (borrow_type (slice_type (named_type (identifier))))))
-      return_type: (return_type type: (error_union_type (named_type (identifier)))))))
+        (parameter
+          name: (identifier)
+          type: (borrow_type
+            (named_type
+              (identifier))))
+        (parameter
+          name: (identifier)
+          type: (borrow_type
+            (slice_type
+              (named_type
+                (identifier))))))
+      return_type: (return_type
+        type: (error_union_type
+          (named_type
+            (identifier)))))))
 
 ==============================
-impl declaration
+function with static value parameter
 ==============================
 
-impl Trace {
-    fn deinit(self: Trace) {
-    }
+fn each<T, worker: Function>(value: T) -> T {
+    worker(value);
+    return value;
 }
 
 ---
 
 (source_file
-  (impl_declaration
-    target: (identifier)
-    (function_declaration
-      name: (identifier)
-      parameters: (parameter_list
-        (parameter name: (identifier) type: (named_type (identifier))))
-      body: (block))))
+  (function_declaration
+    name: (identifier)
+    static_parameters: (static_parameters
+      (static_parameter
+        name: (identifier))
+      (static_parameter
+        name: (identifier)
+        type: (named_type
+          (identifier))))
+    parameters: (parameter_list
+      (parameter
+        name: (identifier)
+        type: (named_type
+          (identifier))))
+    return_type: (return_type
+      type: (named_type
+        (identifier)))
+    body: (block
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (identifier))))
+      (return_statement
+        value: (identifier)))))
 
 ==============================
 impl contract for type
 ==============================
 
-impl Writer for File {
-    fn write(self: &Self) -> !i64 {
-        return 1;
-    }
-}
+impl Writer for File;
 
 ---
 
 (source_file
   (impl_declaration
     contract: (identifier)
-    target: (identifier)
-    (function_declaration
-      name: (identifier)
-      parameters: (parameter_list
-        (parameter name: (identifier) type: (borrow_type (named_type (identifier)))))
-      return_type: (return_type type: (error_union_type (named_type (identifier))))
-      body: (block
-        (return_statement value: (integer_literal))))))
+    target: (identifier)))
+
+==============================
+test declaration
+==============================
+
+test "addition works" {
+    testing::expect_equal<i64>(3, 1 + 2);
+}
+
+---
+
+(source_file
+  (test_declaration
+    (string_literal)
+    (block
+      (expression_statement
+        (call_expression
+          (type_application
+            (namespace_expression
+              (identifier)
+              (identifier))
+            (static_arguments
+              (named_type
+                (identifier))))
+          (argument_list
+            (integer_literal)
+            (binary_expression
+              (integer_literal)
+              (integer_literal))))))))
+
+==============================
+error set declarations
+==============================
+
+error ParseError {
+    InvalidToken,
+    UnexpectedEnd,
+}
+
+pub error Failure = ParseError or std::io::Error;
+
+---
+
+(source_file
+  (error_set_declaration
+    (identifier)
+    (error_set_member
+      (identifier))
+    (error_set_member
+      (identifier)))
+  (error_set_declaration
+    (identifier)
+    (identifier)
+    (scoped_type
+      (identifier)
+      (identifier)
+      (identifier))))
+
+==============================
+unsafe struct and function pointer types
+==============================
+
+unsafe struct Callback {
+    run: unsafe fn(&var Callback, i64) -> ?ptr<u8>,
+}
+
+---
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field
+      (identifier)
+      (function_type
+        (borrow_type
+          (named_type
+            (identifier)))
+        (named_type
+          (identifier))
+        (nullable_type
+          (pointer_type
+            (named_type
+              (identifier))))))))

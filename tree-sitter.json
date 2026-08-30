@@ -14,7 +14,9 @@
     "license": "MIT",
     "description": "Kizu grammar for tree-sitter",
     "authors": [],
-    "links": {}
+    "links": {
+      "repository": "https://github.com/kizu-lang/tree-sitter-kizu"
+    }
   },
   "bindings": {
     "c": true,

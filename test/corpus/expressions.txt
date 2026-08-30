@@ -11,11 +11,26 @@ binary arithmetic
 ---
 
 (source_file
-  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal)))
-  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal)))
-  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal)))
-  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal)))
-  (expression_statement (binary_expression left: (integer_literal) right: (integer_literal))))
+  (expression_statement
+    (binary_expression
+      left: (integer_literal)
+      right: (integer_literal)))
+  (expression_statement
+    (binary_expression
+      left: (integer_literal)
+      right: (integer_literal)))
+  (expression_statement
+    (binary_expression
+      left: (integer_literal)
+      right: (integer_literal)))
+  (expression_statement
+    (binary_expression
+      left: (integer_literal)
+      right: (integer_literal)))
+  (expression_statement
+    (binary_expression
+      left: (integer_literal)
+      right: (integer_literal))))
 
 ==============================
 precedence
@@ -29,7 +44,9 @@ precedence
   (expression_statement
     (binary_expression
       left: (integer_literal)
-      right: (binary_expression left: (integer_literal) right: (integer_literal)))))
+      right: (binary_expression
+        left: (integer_literal)
+        right: (integer_literal)))))
 
 ==============================
 comparison
@@ -43,10 +60,22 @@ a >= b;
 ---
 
 (source_file
-  (expression_statement (binary_expression left: (identifier) right: (identifier)))
-  (expression_statement (binary_expression left: (identifier) right: (identifier)))
-  (expression_statement (binary_expression left: (identifier) right: (identifier)))
-  (expression_statement (binary_expression left: (identifier) right: (identifier))))
+  (expression_statement
+    (binary_expression
+      left: (identifier)
+      right: (identifier)))
+  (expression_statement
+    (binary_expression
+      left: (identifier)
+      right: (identifier)))
+  (expression_statement
+    (binary_expression
+      left: (identifier)
+      right: (identifier)))
+  (expression_statement
+    (binary_expression
+      left: (identifier)
+      right: (identifier))))
 
 ==============================
 logical operators
@@ -58,8 +87,14 @@ x or y;
 ---
 
 (source_file
-  (expression_statement (binary_expression left: (identifier) right: (identifier)))
-  (expression_statement (binary_expression left: (identifier) right: (identifier))))
+  (expression_statement
+    (binary_expression
+      left: (identifier)
+      right: (identifier)))
+  (expression_statement
+    (binary_expression
+      left: (identifier)
+      right: (identifier))))
 
 ==============================
 prefix expression
@@ -70,7 +105,9 @@ prefix expression
 ---
 
 (source_file
-  (expression_statement (prefix_expression operand: (identifier))))
+  (expression_statement
+    (prefix_expression
+      operand: (identifier))))
 
 ==============================
 function call
@@ -85,11 +122,14 @@ add(1, 2);
   (expression_statement
     (call_expression
       function: (identifier)
-      arguments: (argument_list (string_literal))))
+      arguments: (argument_list
+        (string_literal))))
   (expression_statement
     (call_expression
       function: (identifier)
-      arguments: (argument_list (integer_literal) (integer_literal)))))
+      arguments: (argument_list
+        (integer_literal)
+        (integer_literal)))))
 
 ==============================
 method call
@@ -102,8 +142,11 @@ obj.method(x);
 (source_file
   (expression_statement
     (call_expression
-      function: (field_expression value: (identifier) field: (identifier))
-      arguments: (argument_list (identifier)))))
+      function: (field_expression
+        value: (identifier)
+        field: (identifier))
+      arguments: (argument_list
+        (identifier)))))
 
 ==============================
 field access
@@ -115,7 +158,9 @@ user.name;
 
 (source_file
   (expression_statement
-    (field_expression value: (identifier) field: (identifier))))
+    (field_expression
+      value: (identifier)
+      field: (identifier))))
 
 ==============================
 namespace access
@@ -127,7 +172,9 @@ Color::Red;
 
 (source_file
   (expression_statement
-    (namespace_expression namespace: (identifier) name: (identifier))))
+    (namespace_expression
+      namespace: (identifier)
+      name: (identifier))))
 
 ==============================
 chained namespace and call
@@ -141,9 +188,13 @@ std::testing::expect_equal(1, 2);
   (expression_statement
     (call_expression
       function: (namespace_expression
-        namespace: (namespace_expression namespace: (identifier) name: (identifier))
+        namespace: (namespace_expression
+          namespace: (identifier)
+          name: (identifier))
         name: (identifier))
-      arguments: (argument_list (integer_literal) (integer_literal)))))
+      arguments: (argument_list
+        (integer_literal)
+        (integer_literal)))))
 
 ==============================
 borrow expression
@@ -154,7 +205,9 @@ borrow expression
 ---
 
 (source_file
-  (expression_statement (borrow_expression value: (identifier))))
+  (expression_statement
+    (borrow_expression
+      value: (identifier))))
 
 ==============================
 mutable borrow expression
@@ -165,7 +218,9 @@ mutable borrow expression
 ---
 
 (source_file
-  (expression_statement (mutable_borrow_expression value: (identifier))))
+  (expression_statement
+    (mutable_borrow_expression
+      value: (identifier))))
 
 ==============================
 try expression
@@ -182,13 +237,19 @@ fn main() -> !i64 {
   (function_declaration
     name: (identifier)
     parameters: (parameter_list)
-    return_type: (return_type type: (error_union_type (named_type (identifier))))
+    return_type: (return_type
+      type: (error_union_type
+        (named_type
+          (identifier))))
     body: (block
       (let_statement
         name: (identifier)
         value: (try_expression
-          value: (call_expression function: (identifier) arguments: (argument_list))))
-      (return_statement value: (identifier)))))
+          value: (call_expression
+            function: (identifier)
+            arguments: (argument_list))))
+      (return_statement
+        value: (identifier)))))
 
 ==============================
 index expression
@@ -200,7 +261,9 @@ arr[0];
 
 (source_file
   (expression_statement
-    (index_expression value: (identifier) index: (integer_literal))))
+    (index_expression
+      value: (identifier)
+      index: (integer_literal))))
 
 ==============================
 slice expression
@@ -214,7 +277,9 @@ bytes[0..5];
   (expression_statement
     (index_expression
       value: (identifier)
-      index: (slice_range start: (integer_literal) end: (integer_literal)))))
+      index: (slice_range
+        start: (integer_literal)
+        end: (integer_literal)))))
 
 ==============================
 struct literal
@@ -238,8 +303,12 @@ fn main() {
         name: (identifier)
         value: (struct_literal
           type: (identifier)
-          (field_initializer name: (identifier) value: (string_literal))
-          (field_initializer name: (identifier) value: (integer_literal)))))))
+          (field_initializer
+            name: (identifier)
+            value: (string_literal))
+          (field_initializer
+            name: (identifier)
+            value: (integer_literal)))))))
 
 ==============================
 cast expression
@@ -251,9 +320,14 @@ cast<i64>(x);
 
 (source_file
   (expression_statement
-    (cast_expression
-      type: (named_type (identifier))
-      value: (identifier))))
+    (call_expression
+      function: (type_application
+        function: (identifier)
+        static_arguments: (static_arguments
+          (named_type
+            (identifier))))
+      arguments: (argument_list
+        (identifier)))))
 
 ==============================
 error expression
@@ -269,17 +343,23 @@ fn fail() -> !i64 {
   (function_declaration
     name: (identifier)
     parameters: (parameter_list)
-    return_type: (return_type type: (error_union_type (named_type (identifier))))
+    return_type: (return_type
+      type: (error_union_type
+        (named_type
+          (identifier))))
     body: (block
       (return_statement
-        value: (error_expression message: (string_literal))))))
+        value: (call_expression
+          function: (identifier)
+          arguments: (argument_list
+            (string_literal)))))))
 
 ==============================
 if expression
 ==============================
 
 fn main() {
-    let x = if true { 1 } else { 0 }
+    let x = if true { 1 } else { 0 };
 }
 
 ---
@@ -293,8 +373,12 @@ fn main() {
         name: (identifier)
         value: (if_expression
           condition: (boolean_literal)
-          consequence: (block (expression_statement (integer_literal)))
-          alternative: (block (expression_statement (integer_literal))))))))
+          consequence: (block
+            (expression_statement
+              (integer_literal)))
+          alternative: (block
+            (expression_statement
+              (integer_literal))))))))
 
 ==============================
 match expression as value
@@ -304,7 +388,7 @@ fn main() {
     let x = match c {
         A => 1,
         B => 2,
-    }
+    };
 }
 
 ---
@@ -318,8 +402,12 @@ fn main() {
         name: (identifier)
         value: (match_expression
           value: (identifier)
-          (match_arm pattern: (identifier) value: (integer_literal))
-          (match_arm pattern: (identifier) value: (integer_literal)))))))
+          (match_arm
+            pattern: (identifier)
+            value: (integer_literal))
+          (match_arm
+            pattern: (identifier)
+            value: (integer_literal)))))))
 
 ==============================
 range expression
@@ -331,7 +419,9 @@ range expression
 
 (source_file
   (expression_statement
-    (range_expression start: (integer_literal) end: (integer_literal))))
+    (range_expression
+      start: (integer_literal)
+      end: (integer_literal))))
 
 ==============================
 parenthesized expression
@@ -345,7 +435,9 @@ parenthesized expression
   (expression_statement
     (binary_expression
       left: (parenthesized_expression
-        (binary_expression left: (integer_literal) right: (integer_literal)))
+        (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
       right: (integer_literal))))
 
 ==============================
@@ -366,16 +458,16 @@ fn main() {
       (let_statement
         name: (identifier)
         value: (comptime_expression
-          value: (binary_expression left: (integer_literal) right: (integer_literal)))))))
+          value: (binary_expression
+            left: (integer_literal)
+            right: (integer_literal)))))))
 
 ==============================
 deref expression
 ==============================
 
 fn main() {
-    unsafe {
-        node.*;
-    }
+    unsafe node.*;
 }
 
 ---
@@ -385,10 +477,10 @@ fn main() {
     name: (identifier)
     parameters: (parameter_list)
     body: (block
-      (unsafe_block
-        (block
-          (expression_statement
-            (deref_expression value: (identifier))))))))
+      (expression_statement
+        (marker_expression
+          value: (deref_expression
+            value: (identifier)))))))
 
 ==============================
 union variant construction
@@ -402,7 +494,124 @@ Shape::Point;
 (source_file
   (expression_statement
     (call_expression
-      function: (namespace_expression namespace: (identifier) name: (identifier))
-      arguments: (argument_list (integer_literal))))
+      function: (namespace_expression
+        namespace: (identifier)
+        name: (identifier))
+      arguments: (argument_list
+        (integer_literal))))
   (expression_statement
-    (namespace_expression namespace: (identifier) name: (identifier))))
+    (namespace_expression
+      namespace: (identifier)
+      name: (identifier))))
+
+==============================
+optional and error fallbacks
+==============================
+
+fn main() {
+    let value = maybe orelse 0;
+    let port = read_port() catch 8080;
+    let required = maybe orelse return;
+    let connected = connect() catch return Failure::Closed;
+}
+
+---
+
+(source_file
+  (function_declaration
+    (identifier)
+    (parameter_list)
+    (block
+      (let_statement
+        (identifier)
+        (fallback_expression
+          (identifier)
+          (integer_literal)))
+      (let_statement
+        (identifier)
+        (fallback_expression
+          (call_expression
+            (identifier)
+            (argument_list))
+          (integer_literal)))
+      (let_statement
+        (identifier)
+        (fallback_expression
+          (identifier)
+          (guard_exit)))
+      (let_statement
+        (identifier)
+        (fallback_expression
+          (call_expression
+            (identifier)
+            (argument_list))
+          (guard_exit
+            (namespace_expression
+              (identifier)
+              (identifier))))))))
+
+==============================
+null move and buffer literals
+==============================
+
+fn main() {
+    let empty = null;
+    let handed = move owner;
+    var bytes = [512]u8{};
+}
+
+---
+
+(source_file
+  (function_declaration
+    (identifier)
+    (parameter_list)
+    (block
+      (let_statement
+        (identifier)
+        (null_literal))
+      (let_statement
+        (identifier)
+        (marker_expression
+          (identifier)))
+      (var_statement
+        (identifier)
+        (buffer_literal
+          (buffer_type
+            (integer_literal)
+            (named_type
+              (identifier))))))))
+
+==============================
+static values and function type
+==============================
+
+fn invoke(callback: fn(i64) -> void) {
+    run<4, true, callback>(callback);
+}
+
+---
+
+(source_file
+  (function_declaration
+    (identifier)
+    (parameter_list
+      (parameter
+        (identifier)
+        (function_type
+          (named_type
+            (identifier))
+          (named_type
+            (identifier)))))
+    (block
+      (expression_statement
+        (call_expression
+          (type_application
+            (identifier)
+            (static_arguments
+              (integer_literal)
+              (boolean_literal)
+              (named_type
+                (identifier))))
+          (argument_list
+            (identifier)))))))
