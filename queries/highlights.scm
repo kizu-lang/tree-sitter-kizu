@@ -1,19 +1,20 @@
 ; Keywords
 [
-  "fn" "import" "pub" "let" "var" "return" "defer"
+  "fn" "test" "import" "pub" "let" "var" "return" "defer" "errdefer"
   "if" "else" "while" "break" "continue" "match"
-  "struct" "enum" "union" "contract" "dyn" "for"
-  "impl" "unsafe" "extern" "comptime" "try"
-  "error" "cast" "type" "borrows" "const"
+  "struct" "enum" "union" "contract" "for"
+  "impl" "unsafe" "extern" "comptime" "try" "move"
+  "error" "const"
 ] @keyword
 
-["and" "or"] @keyword.operator
+["and" "or" "orelse" "catch"] @keyword.operator
 
 ; Literals
 (integer_literal) @number
 (string_literal) @string
 (multiline_string_literal) @string
 (boolean_literal) @boolean
+(null_literal) @constant.builtin
 
 ; Comments
 (line_comment) @comment
@@ -67,12 +68,17 @@
   name: (identifier) @type.definition)
 (contract_declaration
   name: (identifier) @type.definition)
+(error_set_declaration
+  name: (identifier) @type.definition)
 
 ; Type references
 (named_type (identifier) @type)
 (generic_type (identifier) @type)
-(dynamic_type (identifier) @type)
 (pointer_type "ptr" @type.builtin)
+(function_type "fn" @type.builtin)
+
+(type_parameters (identifier) @type.parameter)
+(static_parameter name: (identifier) @type.parameter)
 
 ; Parameters
 (parameter
@@ -90,6 +96,10 @@
 (enum_variant
   name: (identifier) @constant)
 (union_variant
+  name: (identifier) @constant)
+(error_set_member
+  name: (identifier) @constant)
+(qualified_pattern
   name: (identifier) @constant)
 
 ; Namespaces

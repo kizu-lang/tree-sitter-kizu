@@ -7,24 +7,26 @@
 - Full syntax support for kizu lang
 - Syntax highlighting queries (`highlights.scm`)
 - Local variable tracking queries (`locals.scm`)
-- 62 test cases covering literals, declarations, statements, and expressions
+- 71 test cases covering literals, declarations, statements, and expressions
 
 ## Neovim
 
 ### Install parser
 
-Add to your nvim-treesitter config:
+Add to your nvim-treesitter config (main branch API):
 
 ```lua
-local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-parser_config.kizu = {
-  install_info = {
-    url = "https://github.com/kizu-lang/tree-sitter-kizu",
-    files = { "src/parser.c" },
-    branch = "main",
-  },
-  filetype = "kizu",
-}
+vim.api.nvim_create_autocmd("User", {
+  pattern = "TSUpdate",
+  callback = function()
+    require("nvim-treesitter.parsers").kizu = {
+      install_info = {
+        url = "https://github.com/kizu-lang/tree-sitter-kizu",
+      },
+      tier = 3,
+    }
+  end,
+})
 ```
 
 Register the filetype in your `init.lua`:
